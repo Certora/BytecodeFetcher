@@ -1,7 +1,7 @@
 # Bytecode Fetcher
 
 This script allows you to fetch a smart contract's bytecode blob based on its Ethereum address.
-It is useful for running the Certora Prover on a contract whose source code is not available.
+It is useful for running the [Certora Prover](https://www.certora.com) on a contract whose source code is not available.
 
 Credit for original script: [BoringCrypto](https://github.com/boringcrypto).
 
@@ -9,6 +9,8 @@ Credit for original script: [BoringCrypto](https://github.com/boringcrypto).
 ```
 npm install
 ```
+
+Set `ETHERSCAN_KEY` as your Etherscan API key, and `INFURA_ENDPOINT` as your Infura project ID.
 
 ## Running
 ```

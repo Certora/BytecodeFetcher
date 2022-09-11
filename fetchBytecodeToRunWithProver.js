@@ -29,19 +29,25 @@ async function main() {
     let provider = new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/" + InfuraAPI)
     let deployedCode = await provider.getCode(address)
 
-    let info = await fetchData(address)
-    let data = {
-        "address": address,
-        "ABI": info.ABI,
-        "SourceCode": info.SourceCode,
-        "ContractName": info.ContractName,
-        "CompilerVersion": info.CompilerVersion,
-        "OptimizationUsed": info.OptimizationUsed,
-        "ConstructorArguments": info.ConstructorArguments,
-        "ContractCreationCode": "",
-        "DeployedCode": deployedCode
+
+    if (deployedCode == "0x") {
+        console.log("Empty code for " + address)
+        fs.writeFileSync("example_" + address + ".json", "") // saving a little bit of space
+    } else {
+        let info = await fetchData(address)
+        let data = {
+            "address": address,
+            "ABI": info.ABI,
+            "SourceCode": info.SourceCode,
+            "ContractName": info.ContractName,
+            "CompilerVersion": info.CompilerVersion,
+            "OptimizationUsed": info.OptimizationUsed,
+            "ConstructorArguments": info.ConstructorArguments,
+            "ContractCreationCode": "",
+            "DeployedCode": deployedCode
+        }
+        fs.writeFileSync("example_" + address + ".json", JSON.stringify(data, null, 4))
     }
-    fs.writeFileSync("example_" + address + ".json", JSON.stringify(data, null, 4))
 }
 
 main()

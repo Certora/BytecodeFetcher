@@ -1,8 +1,16 @@
 let fs = require('fs')
 let fetch = require("node-fetch")
 let ethers = require("ethers")
+let  whatsabi = require("@shazow/whatsabi")
+
 let EtherScanAPI = process.env.ETHERSCAN_KEY
 let InfuraAPI = process.env.INFURA_ENDPOINT
+
+const env = {
+    INFURA_API_KEY: process.env.INFURA_API_KEY,
+    ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
+    NETWORK: "ethers",
+};
 
 async function fetchJSON(url) {
     return await (await fetch(url)).json(); // improve error handling here
@@ -35,15 +43,22 @@ async function main() {
         fs.writeFileSync("example_" + address + ".json", "") // saving a little bit of space
     } else {
         let info = await fetchData(address)
+
+        // Get an ABI-like list of interfaces
+        const abi = whatsabi.abiFromBytecode(deployedCode);
+        abi.forEach((it, index, array) => {
+            if(it.name == undefined){it.name = it.selector}
+            array[index] = it
+        });
         let data = {
             "address": address,
-            "ABI": info.ABI,
+            "ABI": JSON.stringify(abi),
             "SourceCode": info.SourceCode,
             "ContractName": info.ContractName,
             "CompilerVersion": info.CompilerVersion,
             "OptimizationUsed": info.OptimizationUsed,
             "ConstructorArguments": info.ConstructorArguments,
-            "ContractCreationCode": "",
+            "ContractCreationCode": info.ContractCreationCode,
             "DeployedCode": deployedCode
         }
         fs.writeFileSync("example_" + address + ".json", JSON.stringify(data, null, 4))

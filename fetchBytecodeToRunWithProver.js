@@ -6,12 +6,6 @@ let  whatsabi = require("@shazow/whatsabi")
 let EtherScanAPI = process.env.ETHERSCAN_KEY
 let InfuraAPI = process.env.INFURA_ENDPOINT
 
-const env = {
-    INFURA_API_KEY: process.env.INFURA_API_KEY,
-    ETHERSCAN_API_KEY: process.env.ETHERSCAN_API_KEY,
-    NETWORK: "ethers",
-};
-
 async function fetchJSON(url) {
     return await (await fetch(url)).json(); // improve error handling here
 }

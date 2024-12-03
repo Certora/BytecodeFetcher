@@ -44,9 +44,9 @@ async function main() {
     } else {
         let info = await fetchData(address)
 
-        // Get an ABI-like list of interfaces
         const abi = whatsabi.abiFromBytecode(deployedCode);
         abi.forEach((it, index, array) => {
+            //If there is no name defined for the function, fallback to the sighash selector as name.
             if(it.name == undefined){it.name = it.selector}
             array[index] = it
         });

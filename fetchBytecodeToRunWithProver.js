@@ -1,6 +1,8 @@
 let fs = require('fs')
 let fetch = require("node-fetch")
 let ethers = require("ethers")
+let  whatsabi = require("@shazow/whatsabi")
+
 let EtherScanAPI = process.env.ETHERSCAN_KEY
 let InfuraAPI = process.env.INFURA_ENDPOINT
 
@@ -35,15 +37,22 @@ async function main() {
         fs.writeFileSync("example_" + address + ".json", "") // saving a little bit of space
     } else {
         let info = await fetchData(address)
+
+        const abi = whatsabi.abiFromBytecode(deployedCode);
+        abi.forEach((it, index, array) => {
+            //If there is no name defined for the function, fallback to the sighash selector as name.
+            if(it.name == undefined){it.name = it.selector}
+            array[index] = it
+        });
         let data = {
             "address": address,
-            "ABI": info.ABI,
+            "ABI": JSON.stringify(abi),
             "SourceCode": info.SourceCode,
             "ContractName": info.ContractName,
             "CompilerVersion": info.CompilerVersion,
             "OptimizationUsed": info.OptimizationUsed,
             "ConstructorArguments": info.ConstructorArguments,
-            "ContractCreationCode": "",
+            "ContractCreationCode": info.ContractCreationCode,
             "DeployedCode": deployedCode
         }
         fs.writeFileSync("example_" + address + ".json", JSON.stringify(data, null, 4))
